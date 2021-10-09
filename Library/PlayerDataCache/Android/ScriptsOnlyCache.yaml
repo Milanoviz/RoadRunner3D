@@ -13,6 +13,7 @@ ScriptsOnlyBuild:
     - SwipeController
     - TileGenerator
     Unity.Rider.Editor.dll:
+    - Packages.Rider.Editor.RiderScriptEditorData
     - Packages.Rider.Editor.UnitTesting.CallbackData
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
