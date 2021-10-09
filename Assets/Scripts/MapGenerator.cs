@@ -18,10 +18,9 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private float _sieldHeight;
     [SerializeField] private TileGenerator _tileGenerator;
     
-    private float _mapSize;
-
     [SerializeField] private Transform _player;
     
+    private float _mapSize;
 
     private List<GameObject> maps = new List<GameObject>();
     private List<GameObject> activeMaps = new List<GameObject>();
@@ -34,9 +33,10 @@ public class MapGenerator : MonoBehaviour
         instance = this;
 
         _mapSize = _obstaleDistance * _obstacleCountInMap;
-        maps.Add(MakeMap1());
-        maps.Add(MakeMap2());
-        maps.Add(MakeMap3());
+        maps.Add(MakeMap());
+        maps.Add(MakeMap());
+        maps.Add(MakeMap());
+        maps.Add(MakeMap());
         foreach (var map in maps)
         {
             map.SetActive(false);
@@ -50,9 +50,7 @@ public class MapGenerator : MonoBehaviour
             RemoveFirstActiveMap();
             AddActiveMap();
         }
-
-        Debug.Log(activeMaps.Count);
-
+        
     }
 
     public void ResetMaps()
@@ -91,22 +89,22 @@ public class MapGenerator : MonoBehaviour
         activeMaps.Add(nextMap);
     }
 
-    private GameObject MakeMap1()
+    private GameObject MakeMap()
     {
-        GameObject result = new GameObject("Map1");
+        GameObject result = new GameObject();
         result.transform.SetParent(transform);
         bool createSield = false;
         MapItem item = new MapItem();
         for (int i = 0; i < _obstacleCountInMap; i++)
         {
             int randoIndexObstale = Random.Range(0, _obstacles.Count);
-            int randomIndexPos = Random.Range(-1, 1);
+            int randomIndexPos = Random.Range(-1, 2);
             item.SetValue(null, TrackPos.Centre, CoinsStyle.Line);
 
-            if (i == 1) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Left, CoinsStyle.Jump); }
-            else if (i == 2) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Right, CoinsStyle.Jump); }
-            else if (i == 3) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Centre, CoinsStyle.Jump); }
-            else if (i == 4) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Right, CoinsStyle.Jump);createSield = true; }
+            if (i == 1) { item.SetValue(_obstacles[randoIndexObstale], (TrackPos) randomIndexPos, CoinsStyle.Jump); }
+            else if (i == 2) { item.SetValue(_obstacles[randoIndexObstale], (TrackPos) randomIndexPos, CoinsStyle.Jump); }
+            else if (i == 3) { item.SetValue(_obstacles[randoIndexObstale], (TrackPos) randomIndexPos, CoinsStyle.Jump); }
+            else if (i == 4) { item.SetValue(_obstacles[randoIndexObstale], (TrackPos) randomIndexPos, CoinsStyle.Jump); createSield = true; }
 
             Vector3 obstaclePos = new Vector3((int)item.trackPos * _lineoffset, 2.6f, i * _obstaleDistance);
             CreateCoins(item.coinsStyle, obstaclePos, result);
@@ -125,66 +123,7 @@ public class MapGenerator : MonoBehaviour
         return result;
     }
 
-    private GameObject MakeMap2()
-    {
-        GameObject result = new GameObject("Map2");
-        result.transform.SetParent(transform);
-        MapItem item = new MapItem();
-        for (int i = 0; i < _obstacleCountInMap; i++)
-        {
-            int randoIndexObstale = Random.Range(0, _obstacles.Count);
-            item.SetValue(null, TrackPos.Right, CoinsStyle.Line);
-
-            if (i == 2) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Right, CoinsStyle.Jump); }
-            else if (i == 3) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Left, CoinsStyle.Jump); }
-            else if (i == 4) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Centre, CoinsStyle.Jump); }
-            
-            Vector3 obstaclePos = new Vector3((int)item.trackPos * _lineoffset, 2.6f, i * _obstaleDistance);
-            CreateCoins(item.coinsStyle, obstaclePos, result);
-
-            if (item.obstacle != null)
-            {
-                Obstacle newObstacle = Instantiate(item.obstacle, obstaclePos, item.obstacle.transform.rotation, result.transform);
-            }
-        }
-        return result;
-    }
-
-    private GameObject MakeMap3()
-    {
-        GameObject result = new GameObject("Map3");
-        result.transform.SetParent(transform);
-        bool createSield = false;
-        MapItem item = new MapItem();
-        for (int i = 0; i < _obstacleCountInMap; i++)
-        {
-            int randoIndexObstale = Random.Range(0, _obstacles.Count);
-            item.SetValue(null, TrackPos.Right, CoinsStyle.Line);
-
-            if (i == 1) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Left, CoinsStyle.Jump); }
-            else if (i == 2) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Centre, CoinsStyle.Jump); createSield = true; }
-            else if (i == 3) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Right, CoinsStyle.Jump);  }
-            else if (i == 4) { item.SetValue(_obstacles[randoIndexObstale], TrackPos.Centre, CoinsStyle.Jump); }
-
-            Vector3 obstaclePos = new Vector3((int)item.trackPos * _lineoffset, 2.6f, i * _obstaleDistance);
-            CreateCoins(item.coinsStyle, obstaclePos, result);
-
-            if (createSield)
-            {
-                CreateShields(item.coinsStyle, obstaclePos, result);
-                createSield = false;
-            }
-
-
-            if (item.obstacle != null)
-            {
-                Obstacle newObstacle = Instantiate(item.obstacle, obstaclePos, item.obstacle.transform.rotation, result.transform);
-            }
-        }
-        return result;
-    }
-
-
+    
     private void CreateCoins(CoinsStyle style, Vector3 position, GameObject parentObject)
     {
         Vector3 coinPos = Vector3.zero;
@@ -226,7 +165,6 @@ public class MapGenerator : MonoBehaviour
                 Instantiate(_sieldTempate, shieldPosition + position, Quaternion.identity, parentObject.transform);
         }
     }
-
 }
 
 struct MapItem
